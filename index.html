@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <title>Minimal by Steve Smith</title>
+    <script src="javascripts/vue.min.js"></script>
+    <link rel="stylesheet" href="stylesheets/styles.css" />
+    <meta name="viewport" content="width=device-width" />
+  </head>
+  <body>
+    <div id="app" class="wrapper">
+      <header>
+        <h1>Minimal</h1>
+        <p>A Theme for GitHub Pages</p>
+      </header>
+      <section>
+        <h2>Set in stone</h2>
+        <pre>
+             ,-.
+    ,     ,-.   ,-.
+   / \   (   )-(   )
+   \ |  ,.&gt;-(   )-&lt;
+    \|,' (   )-(   )
+     Y ___-'   -'
+     |/__/   -'
+     |
+     |
+     |    -hrr-
+  ___|_____________
+</pre
+        >
+        <h2>Table for two</h2>
+        <table>
+          <tbody>
+            <tr>
+              <th>Name</th>
+              <th>Link</th>
+            </tr>
+            <tr v-for="(item,index) in themes">
+              <td>Link {{index + 1}}</td>
+              <td>
+                <a
+                  :href="'https://' + atob(item) + '/' + window.location.hash"
+                  target="_blank"
+                  >👉 Go to this Link {{index + 1}} 🔗 :)</a
+                >
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h2>Crazy linking action</h2>
+      </section>
+    </div>
+    <script>
+      new Vue({
+        el: "#app",
+        data: {
+          themes: [
+            "d3d3Lm1nbmIwMS5jb20=", // www.mgnb01.com
+            "d3d3Lm1nbmIwMi5jb20=", // www.mgnb02.com
+            // "d3d3Lm1nbmIwMy5jb20=", // www.mgnb03.com
+            // "d3d3Lm1nbmIwNC5jb20=", // www.mgnb04.com
+          ],
+          currentPathAndParams:
+            window.location.pathname + window.location.search,
+        },
+      });
+    </script>
+  </body>
+</html>
