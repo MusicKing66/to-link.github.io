@@ -1,23 +1,25 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <title>Minimal by Steve Smith</title>
-    <script src="javascripts/vue.min.js"></script>
-    <link rel="stylesheet" href="stylesheets/styles.css" />
-    <meta name="viewport" content="width=device-width" />
-    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
-  </head>
-  <body>
-    <div id="app" class="wrapper">
-      <header>
-        <h1>Minimal</h1>
-        <p>A Theme for GitHub Pages</p>
-      </header>
-      <section>
-        <h2>Set in stone</h2>
-        <pre>
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+  <title>Minimal by Steve Smith</title>
+  <script src="javascripts/vue.min.js"></script>
+  <link rel="stylesheet" href="stylesheets/styles.css" />
+  <meta name="viewport" content="width=device-width" />
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+</head>
+
+<body>
+  <div id="app" class="wrapper">
+    <header>
+      <h1>Minimal</h1>
+      <p>A Theme for GitHub Pages</p>
+    </header>
+    <section>
+      <h2>Set in stone</h2>
+      <pre>
              ,-.
     ,     ,-.   ,-.
    / \   (   )-(   )
@@ -29,45 +31,83 @@
      |
      |    -hrr-
   ___|_____________
-</pre
-        >
-        <h2>Table for two</h2>
-        <table>
-          <tbody>
-            <tr>
-              <th>Name</th>
-              <th>Link</th>
-            </tr>
-            <tr v-for="(item,index) in themes">
-              <td>Link {{index + 1}}</td>
-              <td>
-                <a
-                  :href="'https://' + atob(item) + '/' + window.location.hash"
-                  target="_blank"
-                  >👉 Go to this Link {{index + 1}} 🔗 :)</a
-                >
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <h2>Crazy linking action</h2>
-      </section>
-    </div>
-    <script>
-      new Vue({
-        el: "#app",
-        data: {
-          themes: [
-            "bWduYi5mZW5nY2hpeXgueHl6",
-            "NDMuMTQyLjEzNS43Nw==",
-            "cGFnZXMubWduYjAxLmNvbQ==",
-            "cGFnZXMubWduYjAyLmNvbQ==",
-            "cGFnZXMubWctbmIuY29t",
-          ],
-          currentPathAndParams:
-            window.location.pathname + window.location.search,
+</pre>
+      <h2>Table for two</h2>
+      <table>
+        <tbody>
+          <tr>
+            <th>Name</th>
+            <th>Link</th>
+          </tr>
+          <tr v-for="(item,index) in themes">
+            <td>Link {{index + 1}}</td>
+            <td>
+              <a :href="'https://' + atob(item) + '/' + window.location.hash" target="_blank">
+                👉 Go to this Link {{index + 1}} 🔗 :)
+              </a>
+              <span v-if="latencies[index] === undefined">
+                ⏳ 正在测试是否可以访问...
+              </span>
+              <span v-else :class="getLatencyClass(latencies[index])">
+                <template v-if="latencies[index] === 'N/A'">
+                  ❌ 无法访问（超时或被阻止）
+                </template>
+                <template v-else>
+                  ⏱ 延迟: {{ latencies[index] }} ms
+                </template>
+              </span>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+      <h2>Crazy linking action</h2>
+    </section>
+  </div>
+  <script>
+    new Vue({
+      el: "#app",
+      data: {
+        themes: [
+          "bWduYi5mZW5nY2hpeXgueHl6",
+          "NDMuMTQyLjEzNS43Nw==",
+          "cGFnZXMubWduYjAxLmNvbQ==",
+          "cGFnZXMubWduYjAyLmNvbQ==",
+          "cGFnZXMubWctbmIuY29t",
+        ],
+        latencies: [],
+      },
+      mounted() {
+        this.themes.forEach((encoded, index) => {
+          const url = "https://" + atob(encoded) + "/";
+          const start = performance.now();
+
+          const timeout = new Promise((_, reject) =>
+            setTimeout(() => reject("timeout"), 5000)
+          );
+
+          const request = fetch(url, { method: "HEAD", mode: "no-cors" });
+
+          Promise.race([request, timeout])
+            .then(() => {
+              const end = performance.now();
+              const latency = Math.round(end - start);
+              this.$set(this.latencies, index, latency);
+            })
+            .catch(() => {
+              this.$set(this.latencies, index, "N/A");
+            });
+        });
+      },
+      methods: {
+        getLatencyClass(latency) {
+          if (latency === "N/A" || latency >= 1000) return "latency-slow";
+          if (latency >= 500) return "latency-medium";
+          return "latency-fast";
         },
-      });
-    </script>
-  </body>
+      },
+    });
+  </script>
+</body>
+
 </html>
