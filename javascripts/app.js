@@ -2,10 +2,9 @@
   "use strict";
 
   const links = [
-    "NDMuMTQyLjEzNS43Nw==",
-    "cGFnZXMubWduYjAxLmNvbQ==",
-    "cGFnZXMubWduYjAyLmNvbQ==",
-    "cGFnZXMubWctbmIuY29t"
+    "aHR0cDovLzQzLjE0Mi4xMzUuNzc=",
+    "aHR0cHM6Ly9wYWdlcy5tZ25iMDEuY29t",
+    "aHR0cHM6Ly9wYWdlcy5tZ25iMDIuY29t"
   ];
 
   const tableBody = document.getElementById("link-table-body");
@@ -13,13 +12,13 @@
   const states = [];
   let checksStarted = false;
 
-  function decodeHost(encodedHost) {
-    return window.atob(encodedHost);
+  function decodeUrl(encodedUrl) {
+    return window.atob(encodedUrl);
   }
 
-  function buildTargetUrl(encodedHost) {
+  function buildTargetUrl(encodedUrl) {
     const hash = window.location.hash || "";
-    return "https://" + decodeHost(encodedHost) + "/" + hash;
+    return decodeUrl(encodedUrl) + "/" + hash;
   }
 
   function getLatencyClass(latency) {
@@ -74,7 +73,7 @@
     }
   }
 
-  function renderRow(encodedHost, index) {
+  function renderRow(encodedUrl, index) {
     const row = document.createElement("tr");
     const nameCell = document.createElement("td");
     const linkCell = document.createElement("td");
@@ -84,7 +83,7 @@
 
     nameCell.textContent = "Line " + (index + 1);
 
-    anchor.href = buildTargetUrl(encodedHost);
+    anchor.href = buildTargetUrl(encodedUrl);
     anchor.target = "_blank";
     anchor.rel = "noopener noreferrer";
     anchor.textContent = "Go to this Link";
@@ -107,7 +106,7 @@
     };
   }
 
-  function measureLatency(encodedHost, index) {
+  function measureLatency(encodedUrl, index) {
     const start = performance.now();
     const timeoutMs = 5000;
     const controller = new AbortController();
@@ -116,8 +115,7 @@
       finalize(null);
     }, timeoutMs);
     const probeUrl =
-      "https://" +
-      decodeHost(encodedHost) +
+      decodeUrl(encodedUrl) +
       "/favicon.ico?probe=" +
       Date.now() +
       Math.random().toString(16).slice(2);
@@ -166,8 +164,8 @@
     }
 
     checksStarted = true;
-    links.forEach(function (encodedHost, index) {
-      measureLatency(encodedHost, index);
+    links.forEach(function (encodedUrl, index) {
+      measureLatency(encodedUrl, index);
     });
   }
 
