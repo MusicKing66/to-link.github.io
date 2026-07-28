@@ -104,6 +104,11 @@
       status: status,
       recommend: recommend
     };
+
+    if (index === 0) {
+      status.className = "latency-fast";
+      status.textContent = " China Mainland";
+    }
   }
 
   function measureLatency(encodedUrl, index) {
@@ -165,6 +170,7 @@
 
     checksStarted = true;
     links.forEach(function (encodedUrl, index) {
+      if (index === 0) return;
       measureLatency(encodedUrl, index);
     });
   }
