@@ -18,8 +18,16 @@
   }
 
   function buildTargetUrl(encodedUrl) {
+    const pathname = window.location.pathname || "/";
+    const normalizedPath =
+      pathname === "/index.html"
+        ? "/"
+        : pathname.startsWith("/")
+          ? pathname
+          : "/" + pathname;
+    const search = window.location.search || "";
     const hash = window.location.hash || "";
-    return decodeUrl(encodedUrl) + "/" + hash;
+    return decodeUrl(encodedUrl) + normalizedPath + search + hash;
   }
 
   function getLatencyClass(latency) {
@@ -151,12 +159,15 @@
     }
 
     fetch(probeUrl, {
-      method: "GET",
-      mode: "no-cors",
+      method: "HEAD",
+      mode: "cors",
       cache: "no-store",
       signal: controller.signal
     })
-      .then(function () {
+      .then(function (response) {
+        if (!response.ok) {
+          throw new Error("HTTP " + response.status);
+        }
         finalize(Math.round(performance.now() - start));
       })
       .catch(function () {
